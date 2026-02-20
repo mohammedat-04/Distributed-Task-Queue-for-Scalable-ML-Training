@@ -1,0 +1,39 @@
+# Demo jobs (copy into producer console)
+# NOTE: commands here use "train/sum/sumsq/resume" (no leading slash).
+# If your CLI expects "train", just add the leading "/".
+# if there is no id(preloaded) just enter the jobId
+# 1) SUM range
+sum 1|10000000000000000000000002
+
+# 2) SUMSQ range
+sumsq 2|10000332323
+
+# 3) MNIST quick sync
+train type=TrainGdBatchJob|model=logreg|task=binary_is_zero|samples=2000|features=784|epochs=1|batchSize=128|lr=0.1|seed=42|dataRef=file:./data/train.csv|testRef=file:./data/mnist_test.csv|hasHeader=true|csvLabel=first|normalize=255|init=zeros|mode=sync
+
+train type=TrainGdBatchJob|model=logreg|task=binary_is_seven|samples=2000|features=784|epochs=1|batchSize=128|lr=0.1|seed=42|dataRef=file:./data/train.csv|testRef=file:./data/mnist_test.csv|hasHeader=true|csvLabel=first|normalize=255|init=zeros|mode=sync
+
+
+train type=TrainGdBatchJob|model=logreg|task=binary_is_five|samples=2000|features=784|epochs=1|batchSize=128|lr=0.1|seed=42|dataRef=file:./data/train.csv|testRef=file:./data/mnist_test.csv|hasHeader=true|csvLabel=first|normalize=255|init=zeros|mode=sync
+
+
+# 4) MNIST quick async (sync vs async comparison)
+train type=TrainGdBatchJob|jobId=MNIST_QUICK_ASYNC|model=logreg|task=binary_is_zero|samples=2000|features=784|epochs=1|batchSize=128|lr=0.1|seed=42|dataRef=file:./data/train.csv|testRef=file:./data/mnist_test.csv|hasHeader=true|csvLabel=first|normalize=255|init=zeros|mode=async
+
+# 5) MNIST base run (longer)
+train type=TrainGdBatchJob|jobId=MNIST_BASE|model=logreg|task=binary_is_zero|samples=40000|features=542|epochs=2|batchSize=48|lr=0.01|seed=32|dataRef=file:./data/train.csv|testRef=file:./data/mnist_test.csv|hasHeader=true|csvLabel=first|normalize=255|init=zeros|mode=sync
+
+# 6) Resume MNIST_BASE with lower LR
+resume MNIST_BASE|jobId=MNIST_BASE_LR2|epochs=1|lr=0.01|batchSize=128
+
+# 7) MNIST binary_is_one variant
+train type=TrainGdBatchJob|jobId=MNIST_ONE|model=logreg|task=binary_is_one|samples=60000|features=784|epochs=1|batchSize=256|lr=0.1|seed=7|dataRef=file:./data/train.csv|testRef=file:./data/mnist_test.csv|hasHeader=true|csvLabel=first|normalize=255|init=zeros|mode=sync
+
+# 8) Linear regression baseline
+train type=TrainGdBatchJob|jobId=MNIST_LIN|model=linreg|task=demo|samples=60000|features=784|epochs=1|batchSize=256|lr=0.01|seed=1|dataRef=file:./data/train.csv|testRef=file:./data/mnist_test.csv|hasHeader=true|csvLabel=first|normalize=255|init=zeros|mode=sync
+
+# 9) Stock dataset (async)
+train type=TrainGdBatchJob|jobId=STOCK_ASYNC|model=logreg|task=binary_is_one|samples=11971|features=15|epochs=3|batchSize=128|lr=0.1|seed=1|dataRef=file:./data/stock_train.csv|testRef=file:./data/stock_test.csv|hasHeader=true|csvLabel=first|normalize=1|mode=async
+
+# 10) Negative test: invalid dataRef should fail fast
+train type=TrainGdBatchJob|jobId=BAD_DATAREF|model=logreg|task=binary_is_one|samples=100|features=10|epochs=1|batchSize=32|lr=0.1|seed=1|dataRef=file:./data/does_not_exist.csv|testRef=file:./data/does_not_exist.csv|hasHeader=false|csvLabel=last|normalize=1|mode=sync
